@@ -1,0 +1,9 @@
+{
+  "name": "split-bill",
+  "version": "1.0.0",
+  "description": "🧾 คำนวณหารเงิน - Split Bill Calculator with PromptPay QR",
+  "scripts": {
+    "dev": "npx serve .",
+    "deploy": "vercel --prod"
+  }
+}

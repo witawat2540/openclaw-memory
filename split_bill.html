@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧾 คำนวณหารเงิน</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        button.success {
+            background: #28a745;
+        }
+        button.success:hover {
+            background: #218838;
+        }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        button.warning {
+            background: #ffc107;
+            color: #333;
+        }
+        button.warning:hover {
+            background: #e0a800;
+        }
+        button.info {
+            background: #17a2b8;
+        }
+        button.info:hover {
+            background: #138496;
+        }
+        .people-list, .items-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .person-tag, .item-card {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .item-card {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .results {
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #c3e6cb;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .payer {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .amount-positive {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .amount-negative {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .total {
+            font-size: 1.5em;
+            text-align: center;
+            margin: 20px 0;
+            color: #667eea;
+        }
+        .instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .instructions h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        /* Members Section Styles */
+        .members-section {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+        }
+        .saved-member {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .saved-member:last-child {
+            margin-bottom: 0;
+        }
+        .saved-member-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .saved-member-name {
+            font-weight: bold;
+        }
+        .saved-member-promptpay {
+            font-size: 0.85em;
+            color: #28a745;
+        }
+        .saved-member-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* Share Section */
+        .share-section {
+            background: #e3f2fd;
+            border-left: 4px solid #17a2b8;
+        }
+        .share-url {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #17a2b8;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            margin-bottom: 10px;
+        }
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* Clear Settlement Box */
+        .settlement-box {
+            background: #fff;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .settlement-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+        .settlement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .settlement-item:last-child {
+            margin-bottom: 0;
+        }
+        .settlement-arrow {
+            font-size: 1.2em;
+            margin: 0 10px;
+            color: #667eea;
+        }
+        .settlement-from {
+            font-weight: bold;
+        }
+        .settlement-to {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .settlement-amount {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        
+        /* Person breakdown card */
+        .person-breakdown {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .person-breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 10px;
+        }
+        .person-breakdown-name {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .person-breakdown-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge-payer {
+            background: #ffc107;
+            color: #333;
+        }
+        .badge-receive {
+            background: #28a745;
+            color: white;
+        }
+        .badge-pay {
+            background: #dc3545;
+            color: white;
+        }
+        .badge-even {
+            background: #6c757d;
+            color: white;
+        }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+        .breakdown-label {
+            color: #666;
+        }
+        .breakdown-value {
+            font-weight: 500;
+        }
+        .breakdown-final {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px dashed #eee;
+            font-size: 1.1em;
+        }
+        
+        /* History Section Styles */
+        .history-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .history-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .history-payer {
+            background: #ffc107;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .history-date {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+        .history-details {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .history-total {
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 8px;
+        }
+        .history-actions {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        .history-actions button {
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        .empty-history {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            margin-left: 5px;
+        }
+        .badge-qr {
+            background: #28a745;
+            color: white;
+            font-size: 0.7em;
+        }
+        
+        /* QR Code Styles */
+        .qr-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+        .qr-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-width: 180px;
+        }
+        .qr-item canvas {
+            margin: 0 auto 10px;
+            border-radius: 8px;
+        }
+        .qr-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .qr-amount {
+            font-size: 1.2em;
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .qr-promptpay {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        .modal .input-group {
+            margin-bottom: 15px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* Shared view banner */
+        .shared-banner {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .shared-banner h3 {
+            margin-bottom: 5px;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+            .section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            .section h2 {
+                font-size: 1.1em;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+            .input-group input, .input-group button {
+                width: 100%;
+            }
+            .input-group button {
+                margin-top: 5px;
+            }
+            button {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            .total {
+                font-size: 1.2em;
+            }
+            .instructions {
+                padding: 12px;
+            }
+            .instructions ol {
+                margin-left: 15px;
+                font-size: 0.9em;
+            }
+            .person-breakdown {
+                padding: 12px;
+            }
+            .person-breakdown-name {
+                font-size: 1em;
+            }
+            .breakdown-row {
+                font-size: 0.9em;
+            }
+            .breakdown-final {
+                font-size: 1em;
+            }
+            .person-breakdown-badge {
+                font-size: 0.75em;
+                padding: 3px 8px;
+            }
+            .settlement-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            .settlement-arrow {
+                transform: rotate(90deg);
+            }
+            .settlement-amount {
+                font-size: 1.2em;
+            }
+            .qr-container {
+                padding: 15px;
+                gap: 15px;
+            }
+            .qr-item {
+                min-width: 140px;
+                padding: 12px;
+            }
+            .qr-item canvas {
+                width: 130px !important;
+                height: 130px !important;
+            }
+            .qr-amount {
+                font-size: 1em;
+            }
+            .share-buttons {
+                flex-direction: column;
+            }
+            .share-buttons button {
+                width: 100%;
+            }
+            .modal {
+                padding: 20px;
+                margin: 10px;
+            }
+            .modal h3 {
+                font-size: 1.1em;
+            }
+            .checkbox-group label {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+            .checkbox-group input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+            }
+            .item-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .item-card > div:last-child {
+                align-self: flex-end;
+            }
+            .saved-member {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .saved-member-actions {
+                align-self: flex-end;
+            }
+            div[style*="text-align: center"] {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            div[style*="text-align: center"] button {
+                width: 100%;
+                margin-left: 0 !important;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 12px;
+                border-radius: 12px;
+            }
+            h1 {
+                font-size: 1.3em;
+            }
+            .section {
+                padding: 12px;
+            }
+            .section h2 {
+                font-size: 1em;
+            }
+            input[type="text"], input[type="number"] {
+                padding: 10px;
+                font-size: 15px;
+            }
+            button {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+            .qr-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .qr-item {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧾 คำนวณหารเงิน</h1>
+        
+        <!-- Shared View Banner -->
+        <div id="sharedBanner" class="shared-banner" style="display: none;">
+            <h3>🔗 ดูจากลิงก์ที่แชร์</h3>
+            <p>สแกน QR Code เพื่อโอนเงินได้เลย!</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 วิธีใช้งาน</h3>
+            <ol>
+                <li>เพิ่มสมาชิก (เก็บเบอร์พร้อมเพย์ไว้ใช้ซ้ำได้)</li>
+                <li>เลือกสมาชิกที่กินด้วยกัน</li>
+                <li>เพิ่มรายการอาหาร/เครื่องดื่มพร้อมราคา</li>
+                <li>เลือกว่าใครกินรายการไหนบ้าง</li>
+                <li>เลือกคนที่จ่ายเงินไปก่อน</li>
+                <li>กด "คำนวณ" → กด "แชร์ลิงก์" ส่งให้เพื่อนได้เลย</li>
+            </ol>
+        </div>
+
+        <!-- สมาชิกที่บันทึกไว้ -->
+        <div class="section members-section">
+            <h2>👥 สมาชิกที่บันทึกไว้ (เก็บที่เครื่องนี้)</h2>
+            <div class="input-group">
+                <button onclick="showAddMemberModal()" class="success">➕ เพิ่มสมาชิกใหม่</button>
+            </div>
+            <div id="savedMembersList" style="margin-top: 15px;">
+                <div class="empty-history">ยังไม่มีสมาชิก</div>
+            </div>
+        </div>
+
+        <!-- ส่วนเลือกคน -->
+        <div class="section">
+            <h2>✅ เลือกคนในวงนี้</h2>
+            <div id="selectPeopleList" style="margin-top: 15px;">
+                <div class="empty-history">เพิ่มสมาชิกก่อนครับ</div>
+            </div>
+        </div>
+
+        <!-- ส่วนเพิ่มรายการอาหาร -->
+        <div class="section">
+            <h2>🍽️ รายการอาหาร/เครื่องดื่ม</h2>
+            <div class="input-group">
+                <input type="text" id="itemName" placeholder="ชื่อรายการ (เช่น ผัดไทย)">
+                <input type="number" id="itemPrice" placeholder="ราคา (บาท)" min="0">
+                <button onclick="addItem()">เพิ่ม</button>
+            </div>
+            <div class="items-list" id="itemsList"></div>
+        </div>
+
+        <!-- ส่วนคนจ่ายเงิน -->
+        <div class="section">
+            <h2>💰 คนจ่ายเงิน</h2>
+            <select id="payerSelect" style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 16px;">
+                <option value="">-- เลือกคนจ่ายเงิน --</option>
+            </select>
+        </div>
+
+        <!-- ปุ่มคำนวณ -->
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="calculate()" style="padding: 15px 50px; font-size: 1.2em;">📊 คำนวณ</button>
+            <button onclick="resetAll()" class="danger" style="margin-left: 10px;">🗑️ เคลียร์</button>
+        </div>
+
+        <!-- ผลลัพธ์ -->
+        <div id="results" style="display: none;">
+            <div class="total" id="totalAmount"></div>
+            <div class="results" id="resultsList"></div>
+            
+            <!-- สรุปการเคลียร์หนี้ -->
+            <div class="settlement-box" id="settlementBox"></div>
+            
+            <!-- QR Codes -->
+            <div id="qrContainer" class="qr-container"></div>
+            
+            <!-- แชร์ลิงก์ -->
+            <div class="section share-section" id="shareSection" style="display: none;">
+                <h2>🔗 แชร์ให้เพื่อน</h2>
+                <input type="text" id="shareUrl" class="share-url" readonly>
+                <div class="share-buttons">
+                    <button onclick="copyShareUrl()" class="info">📋 คัดลอกลิงก์</button>
+                    <button onclick="shareToLine()" class="success">💚 LINE</button>
+                    <button onclick="shareGeneric()" class="secondary">📱 แชร์</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal เพิ่ม/แก้ไขสมาชิก -->
+    <div class="modal-overlay" id="memberModal">
+        <div class="modal">
+            <h3 id="memberModalTitle">➕ เพิ่มสมาชิกใหม่</h3>
+            <div class="input-group" style="flex-direction: column;">
+                <input type="text" id="memberName" placeholder="ชื่อเล่น (เช่น บอม, นุ่น)">
+            </div>
+            <div class="input-group" style="flex-direction: column;">
+                <input type="text" id="memberPromptPay" placeholder="เบอร์พร้อมเพย์ (10 หลัก)" maxlength="10">
+            </div>
+            <div style="font-size: 0.85em; color: #6c757d; margin-top: -10px; margin-bottom: 10px;">
+                💡 ใส่เบอร์พร้อมเพย์เพื่อสร้าง QR Code สำหรับโอนเงิน
+            </div>
+            <div class="modal-buttons">
+                <button onclick="closeMemberModal()" class="secondary">ยกเลิก</button>
+                <button onclick="saveMember()" class="success">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Data structures
+        let savedMembers = [];
+        let selectedPeople = [];
+        let items = [];
+        let lastCalculation = null;
+        let editingMemberId = null;
+
+        // ========== Storage Functions ==========
+        function loadSavedMembers() {
+            const saved = localStorage.getItem('splitBillMembers');
+            if (saved) savedMembers = JSON.parse(saved);
+        }
+
+        function saveMembers() {
+            localStorage.setItem('splitBillMembers', JSON.stringify(savedMembers));
+        }
+
+        // ========== URL Data Functions ==========
+        function encodeData(data) {
+            return btoa(encodeURIComponent(JSON.stringify(data)));
+        }
+
+        function decodeData(str) {
+            try {
+                return JSON.parse(decodeURIComponent(atob(str)));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function generateShareUrl() {
+            if (!lastCalculation) return null;
+            
+            const shareData = {
+                members: lastCalculation.selectedPeople.map(id => {
+                    const member = savedMembers.find(m => m.id === id);
+                    return member ? { name: member.name, promptpay: member.promptpay } : null;
+                }).filter(m => m),
+                items: lastCalculation.items.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    eaters: item.eaters.map(id => {
+                        const member = savedMembers.find(m => m.id === id);
+                        return member ? member.name : null;
+                    }).filter(n => n)
+                })),
+                payerId: lastCalculation.payerId,
+                payerName: savedMembers.find(m => m.id === lastCalculation.payerId)?.name,
+                payerPromptPay: savedMembers.find(m => m.id === lastCalculation.payerId)?.promptpay,
+                total: lastCalculation.total,
+                amounts: Object.fromEntries(
+                    Object.entries(lastCalculation.amounts).map(([id, amt]) => {
+                        const member = savedMembers.find(m => m.id === id);
+                        return [member?.name || id, amt];
+                    })
+                )
+            };
+            
+            const encoded = encodeData(shareData);
+            return window.location.origin + window.location.pathname + '?s=' + encoded;
+        }
+
+        function loadFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const sharedData = params.get('s');
+            
+            if (sharedData) {
+                const data = decodeData(sharedData);
+                if (data) {
+                    showSharedView(data);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        async function showSharedView(data) {
+            document.getElementById('sharedBanner').style.display = 'block';
+            
+            // Hide input sections
+            document.querySelectorAll('.section').forEach(s => {
+                if (!s.classList.contains('share-section')) {
+                    s.style.display = 'none';
+                }
+            });
+            document.querySelector('div[style*="text-align: center"]').style.display = 'none';
+            
+            // Show results
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('totalAmount').innerHTML = `รวมทั้งหมด: ${data.total.toFixed(2)} บาท`;
+
+            // Build detailed breakdown
+            let resultsHTML = '';
+            
+            data.members.forEach(member => {
+                const amount = data.amounts[member.name] || 0;
+                const isPayer = member.name === data.payerName;
+                const diff = isPayer ? data.total - amount : amount;
+                
+                let badgeClass, badgeText;
+                if (isPayer) {
+                    if (diff > 0) {
+                        badgeClass = 'badge-receive';
+                        badgeText = `💰 ได้รับ ${diff.toFixed(2)} บาท`;
+                    } else if (diff < 0) {
+                        badgeClass = 'badge-pay';
+                        badgeText = `💸 จ่ายเกิน ${Math.abs(diff).toFixed(2)} บาท`;
+                    } else {
+                        badgeClass = 'badge-even';
+                        badgeText = '✅ เท่ากัน';
+                    }
+                } else {
+                    badgeClass = 'badge-pay';
+                    badgeText = `💸 ต้องโอน ${amount.toFixed(2)} บาท`;
+                }
+
+                resultsHTML += `
+                    <div class="person-breakdown">
+                        <div class="person-breakdown-header">
+                            <span class="person-breakdown-name">${member.name}</span>
+                            <span class="person-breakdown-badge ${isPayer ? 'badge-payer' : ''}">${isPayer ? '💳 จ่ายเงิน' : '👤 กิน'}</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">${isPayer ? '💳 จ่ายไป' : '🍽️ กินไป'}</span>
+                            <span class="breakdown-value">${isPayer ? data.total.toFixed(2) : amount.toFixed(2)} บาท</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">${isPayer ? '🍽️ กินไป' : '💳 ต้องจ่าย'}</span>
+                            <span class="breakdown-value">${isPayer ? amount.toFixed(2) : amount.toFixed(2)} บาท</span>
+                        </div>
+                        <div class="breakdown-row breakdown-final">
+                            <span class="breakdown-label">📊 สรุป</span>
+                            <span class="person-breakdown-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('resultsList').innerHTML = resultsHTML;
+
+            // Build settlement summary
+            let settlementHTML = '<h3>💵 สรุปการโอนเงิน</h3>';
+            
+            if (data.payerName && data.payerPromptPay) {
+                const payers = data.members.filter(m => m.name !== data.payerName && (data.amounts[m.name] || 0) > 0);
+                
+                if (payers.length > 0) {
+                    payers.forEach(member => {
+                        const amount = data.amounts[member.name] || 0;
+                        settlementHTML += `
+                            <div class="settlement-item">
+                                <div>
+                                    <span class="settlement-from">${member.name}</span>
+                                    <span class="settlement-arrow">→</span>
+                                    <span class="settlement-to">${data.payerName}</span>
+                                </div>
+                                <span class="settlement-amount">${amount.toFixed(2)} บาท</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    settlementHTML += '<p style="text-align: center; color: #28a745;">✅ เคลียร์หมดแล้ว!</p>';
+                }
+            } else {
+                settlementHTML += '<p style="text-align: center; color: #6c757d;">💡 ไม่มีเบอร์พร้อมเพย์ของคนจ่าย</p>';
+            }
+
+            document.getElementById('settlementBox').innerHTML = settlementHTML;
+
+            // Generate QR Codes
+            await generateSharedQRCodes(data);
+
+            // Show share section
+            const shareUrl = window.location.href;
+            document.getElementById('shareUrl').value = shareUrl;
+            document.getElementById('shareSection').style.display = 'block';
+        }
+
+        async function generateSharedQRCodes(data) {
+            const container = document.getElementById('qrContainer');
+            container.innerHTML = '';
+
+            if (!data.payerPromptPay) {
+                container.innerHTML = `<div style="text-align: center; color: #6c757d; padding: 20px;">
+                    💡 ไม่มีเบอร์พร้อมเพย์ของ ${data.payerName}
+                </div>`;
+                container.style.display = 'block';
+                return;
+            }
+
+            const peopleWhoNeedToPay = data.members.filter(m => 
+                m.name !== data.payerName && (data.amounts[m.name] || 0) > 0
+            );
+
+            if (peopleWhoNeedToPay.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+
+            for (let i = 0; i < peopleWhoNeedToPay.length; i++) {
+                const member = peopleWhoNeedToPay[i];
+                const amount = data.amounts[member.name] || 0;
+                
+                const qrItem = document.createElement('div');
+                qrItem.className = 'qr-item';
+                qrItem.innerHTML = `
+                    <canvas id="qr-shared-${i}" width="150" height="150"></canvas>
+                    <div class="qr-label">${member.name} → ${data.payerName}</div>
+                    <div class="qr-amount">${amount.toFixed(2)} บาท</div>
+                    <div class="qr-promptpay">📱 ${data.payerPromptPay}</div>
+                `;
+                container.appendChild(qrItem);
+
+                await generateQRCode(`qr-shared-${i}`, data.payerPromptPay, amount);
+            }
+        }
+
+        // ========== Member Functions ==========
+        function showAddMemberModal() {
+            editingMemberId = null;
+            document.getElementById('memberModalTitle').textContent = '➕ เพิ่มสมาชิกใหม่';
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberPromptPay').value = '';
+            document.getElementById('memberModal').classList.add('active');
+        }
+
+        function showEditMemberModal(id) {
+            const member = savedMembers.find(m => m.id === id);
+            if (!member) return;
+            
+            editingMemberId = id;
+            document.getElementById('memberModalTitle').textContent = '✏️ แก้ไขสมาชิก';
+            document.getElementById('memberName').value = member.name;
+            document.getElementById('memberPromptPay').value = member.promptpay || '';
+            document.getElementById('memberModal').classList.add('active');
+        }
+
+        function closeMemberModal() {
+            document.getElementById('memberModal').classList.remove('active');
+            editingMemberId = null;
+        }
+
+        function saveMember() {
+            const name = document.getElementById('memberName').value.trim();
+            const promptpay = document.getElementById('memberPromptPay').value.trim();
+            
+            if (!name) {
+                alert('กรุณากรอกชื่อครับ');
+                return;
+            }
+            
+            if (promptpay && !/^\d{10}$/.test(promptpay)) {
+                alert('เบอร์พร้อมเพย์ต้องเป็นตัวเลข 10 หลักครับ');
+                return;
+            }
+
+            if (editingMemberId) {
+                const idx = savedMembers.findIndex(m => m.id === editingMemberId);
+                if (idx > -1) {
+                    savedMembers[idx].name = name;
+                    savedMembers[idx].promptpay = promptpay;
+                }
+            } else {
+                savedMembers.push({
+                    id: Date.now().toString(),
+                    name: name,
+                    promptpay: promptpay
+                });
+            }
+
+            saveMembers();
+            updateSavedMembersList();
+            updateSelectPeopleList();
+            updatePayerSelect();
+            closeMemberModal();
+        }
+
+        function deleteMember(id) {
+            if (!confirm('ต้องการลบสมาชิกนี้?')) return;
+            
+            savedMembers = savedMembers.filter(m => m.id !== id);
+            selectedPeople = selectedPeople.filter(pid => pid !== id);
+            
+            saveMembers();
+            updateSavedMembersList();
+            updateSelectPeopleList();
+            updatePayerSelect();
+        }
+
+        function updateSavedMembersList() {
+            const list = document.getElementById('savedMembersList');
+            
+            if (savedMembers.length === 0) {
+                list.innerHTML = '<div class="empty-history">ยังไม่มีสมาชิก - กด "เพิ่มสมาชิกใหม่" เพื่อเริ่มต้น</div>';
+                return;
+            }
+
+            list.innerHTML = savedMembers.map(member => `
+                <div class="saved-member">
+                    <div class="saved-member-info">
+                        <span class="saved-member-name">${member.name}</span>
+                        ${member.promptpay ? `<span class="saved-member-promptpay">📱 ${member.promptpay}</span>` : '<span style="color: #999; font-size: 0.85em;">ไม่มีพร้อมเพย์</span>'}
+                    </div>
+                    <div class="saved-member-actions">
+                        <button onclick="showEditMemberModal('${member.id}')" class="warning" style="padding: 4px 10px;">✏️</button>
+                        <button onclick="deleteMember('${member.id}')" class="danger" style="padding: 4px 10px;">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========== Selection Functions ==========
+        function togglePersonSelection(id) {
+            const idx = selectedPeople.indexOf(id);
+            if (idx > -1) {
+                selectedPeople.splice(idx, 1);
+            } else {
+                selectedPeople.push(id);
+            }
+            updateSelectPeopleList();
+            updatePayerSelect();
+        }
+
+        function updateSelectPeopleList() {
+            const list = document.getElementById('selectPeopleList');
+            
+            if (savedMembers.length === 0) {
+                list.innerHTML = '<div class="empty-history">เพิ่มสมาชิกก่อนครับ</div>';
+                return;
+            }
+
+            list.innerHTML = `
+                <div class="checkbox-group">
+                    ${savedMembers.map(member => `
+                        <label style="background: ${selectedPeople.includes(member.id) ? '#d4edda' : 'white'}; border: 2px solid ${selectedPeople.includes(member.id) ? '#28a745' : '#ddd'};">
+                            <input type="checkbox" 
+                                   ${selectedPeople.includes(member.id) ? 'checked' : ''} 
+                                   onchange="togglePersonSelection('${member.id}')">
+                            <strong>${member.name}</strong>
+                            ${member.promptpay ? '<span class="badge badge-qr">📱</span>' : ''}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function updatePayerSelect() {
+            const select = document.getElementById('payerSelect');
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">-- เลือกคนจ่ายเงิน --</option>';
+            
+            savedMembers.forEach(member => {
+                if (selectedPeople.includes(member.id)) {
+                    select.innerHTML += `<option value="${member.id}">${member.name}</option>`;
+                }
+            });
+            
+            if (selectedPeople.includes(currentValue)) {
+                select.value = currentValue;
+            }
+        }
+
+        // ========== Item Functions ==========
+        function addItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            
+            if (name && price > 0) {
+                items.push({ name: name, price: price, eaters: [] });
+                updateItemsList();
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemPrice').value = '';
+            }
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            updateItemsList();
+        }
+
+        function toggleEater(itemIndex, memberId) {
+            const item = items[itemIndex];
+            const idx = item.eaters.indexOf(memberId);
+            if (idx > -1) {
+                item.eaters.splice(idx, 1);
+            } else {
+                item.eaters.push(memberId);
+            }
+            updateItemsList();
+        }
+
+        function getMemberName(id) {
+            const member = savedMembers.find(m => m.id === id);
+            return member ? member.name : id;
+        }
+
+        function getMemberPromptPay(id) {
+            const member = savedMembers.find(m => m.id === id);
+            return member ? member.promptpay : null;
+        }
+
+        function updateItemsList() {
+            const list = document.getElementById('itemsList');
+            
+            if (items.length === 0) {
+                list.innerHTML = '';
+                return;
+            }
+
+            const selectedMembers = savedMembers.filter(m => selectedPeople.includes(m.id));
+            
+            list.innerHTML = items.map((item, index) => `
+                <div class="item-card">
+                    <div>
+                        <strong>${item.name}</strong> - ${item.price} บาท<br>
+                        <small>กินโดย: ${item.eaters.length > 0 ? item.eaters.map(id => getMemberName(id)).join(', ') : 'ยังไม่ได้เลือก'}</small>
+                    </div>
+                    <div>
+                        <button onclick="removeItem(${index})" class="danger" style="padding: 5px 10px;">ลบ</button>
+                    </div>
+                </div>
+                ${selectedMembers.length > 0 ? `
+                <div class="checkbox-group">
+                    ${selectedMembers.map(member => `
+                        <label>
+                            <input type="checkbox" 
+                                   ${item.eaters.includes(member.id) ? 'checked' : ''} 
+                                   onchange="toggleEater(${index}, '${member.id}')">
+                            ${member.name}
+                        </label>
+                    `).join('')}
+                </div>
+                ` : ''}
+            `).join('');
+        }
+
+        // ========== PromptPay QR Generation ==========
+        function generatePromptPayPayload(phoneNumber, amount) {
+            let phone = phoneNumber.replace(/^0/, '66');
+            const amountStr = amount.toFixed(2);
+            
+            const payload = [
+                '000201', '010211', '2937', '0016A000000677010112',
+                `01${phone.length.toString().padStart(2, '0')}${phone}`,
+                '5303764', `54${amountStr.length.toString().padStart(2, '0')}${amountStr}`, '5802TH',
+            ].join('');
+            
+            const crc = calculateCRC16(payload + '6304');
+            return payload + '6304' + crc;
+        }
+
+        function calculateCRC16(str) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < str.length; i++) {
+                crc ^= str.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+                }
+            }
+            return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        async function generateQRCode(canvasId, phoneNumber, amount) {
+            const payload = generatePromptPayPayload(phoneNumber, amount);
+            const canvas = document.getElementById(canvasId);
+            
+            if (canvas && typeof QRCode !== 'undefined') {
+                await QRCode.toCanvas(canvas, payload, {
+                    width: 150, margin: 2,
+                    color: { dark: '#000000', light: '#ffffff' }
+                });
+            }
+        }
+
+        // ========== Calculate & Display ==========
+        async function calculate() {
+            if (selectedPeople.length === 0) {
+                alert('กรุณาเลือกคนก่อนครับ');
+                return;
+            }
+            if (items.length === 0) {
+                alert('กรุณาเพิ่มรายการอาหารก่อนครับ');
+                return;
+            }
+
+            const payerId = document.getElementById('payerSelect').value;
+            
+            let amounts = {};
+            selectedPeople.forEach(id => amounts[id] = 0);
+
+            let total = 0;
+            items.forEach(item => {
+                total += item.price;
+                if (item.eaters.length > 0) {
+                    const perPerson = item.price / item.eaters.length;
+                    item.eaters.forEach(eaterId => {
+                        if (amounts[eaterId] !== undefined) {
+                            amounts[eaterId] += perPerson;
+                        }
+                    });
+                }
+            });
+
+            lastCalculation = {
+                selectedPeople: [...selectedPeople],
+                items: items.map(item => ({...item, eaters: [...item.eaters]})),
+                payerId: payerId,
+                total: total,
+                amounts: {...amounts},
+                date: new Date().toISOString()
+            };
+
+            document.getElementById('totalAmount').innerHTML = `รวมทั้งหมด: ${total.toFixed(2)} บาท`;
+
+            // Build detailed breakdown
+            let resultsHTML = '';
+            
+            selectedPeople.forEach(id => {
+                const amount = amounts[id];
+                const isPayer = id === payerId;
+                const name = getMemberName(id);
+                const diff = isPayer ? total - amount : amount;
+                
+                let badgeClass, badgeText;
+                if (isPayer) {
+                    if (diff > 0) {
+                        badgeClass = 'badge-receive';
+                        badgeText = `💰 ได้รับ ${diff.toFixed(2)} บาท`;
+                    } else if (diff < 0) {
+                        badgeClass = 'badge-pay';
+                        badgeText = `💸 จ่ายเกิน ${Math.abs(diff).toFixed(2)} บาท`;
+                    } else {
+                        badgeClass = 'badge-even';
+                        badgeText = '✅ เท่ากัน';
+                    }
+                } else {
+                    badgeClass = 'badge-pay';
+                    badgeText = `💸 ต้องโอน ${amount.toFixed(2)} บาท`;
+                }
+
+                resultsHTML += `
+                    <div class="person-breakdown">
+                        <div class="person-breakdown-header">
+                            <span class="person-breakdown-name">${name}</span>
+                            <span class="person-breakdown-badge ${isPayer ? 'badge-payer' : ''}">${isPayer ? '💳 จ่ายเงิน' : '👤 กิน'}</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">${isPayer ? '💳 จ่ายไป' : '🍽️ กินไป'}</span>
+                            <span class="breakdown-value">${isPayer ? total.toFixed(2) : amount.toFixed(2)} บาท</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">${isPayer ? '🍽️ กินไป' : '💳 ต้องจ่าย'}</span>
+                            <span class="breakdown-value">${amount.toFixed(2)} บาท</span>
+                        </div>
+                        <div class="breakdown-row breakdown-final">
+                            <span class="breakdown-label">📊 สรุป</span>
+                            <span class="person-breakdown-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('resultsList').innerHTML = resultsHTML;
+
+            // Build settlement summary
+            let settlementHTML = '<h3>💵 สรุปการโอนเงิน</h3>';
+            
+            if (payerId) {
+                const payerName = getMemberName(payerId);
+                const payers = selectedPeople.filter(id => id !== payerId && amounts[id] > 0);
+                
+                if (payers.length > 0) {
+                    payers.forEach(id => {
+                        const amount = amounts[id];
+                        settlementHTML += `
+                            <div class="settlement-item">
+                                <div>
+                                    <span class="settlement-from">${getMemberName(id)}</span>
+                                    <span class="settlement-arrow">→</span>
+                                    <span class="settlement-to">${payerName}</span>
+                                </div>
+                                <span class="settlement-amount">${amount.toFixed(2)} บาท</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    settlementHTML += '<p style="text-align: center; color: #28a745;">✅ เคลียร์หมดแล้ว!</p>';
+                }
+            } else {
+                settlementHTML += '<p style="text-align: center; color: #ffc107;">⚠️ ยังไม่ได้เลือกคนจ่ายเงิน</p>';
+            }
+
+            document.getElementById('settlementBox').innerHTML = settlementHTML;
+
+            // Generate QR Codes
+            await generateQRCodes(payerId, amounts);
+
+            // Generate and show share URL
+            const shareUrl = generateShareUrl();
+            if (shareUrl) {
+                document.getElementById('shareUrl').value = shareUrl;
+                document.getElementById('shareSection').style.display = 'block';
+            }
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function generateQRCodes(payerId, amounts) {
+            const container = document.getElementById('qrContainer');
+            container.innerHTML = '';
+
+            if (!payerId) {
+                container.style.display = 'none';
+                return;
+            }
+
+            const payerPromptPay = getMemberPromptPay(payerId);
+            const payerName = getMemberName(payerId);
+            
+            if (!payerPromptPay) {
+                container.innerHTML = `<div style="text-align: center; color: #6c757d; padding: 20px;">
+                    💡 เพิ่มเบอร์พร้อมเพย์ของ <strong>${payerName}</strong> เพื่อสร้าง QR Code
+                </div>`;
+                container.style.display = 'block';
+                return;
+            }
+
+            const peopleWhoNeedToPay = selectedPeople.filter(id => id !== payerId && amounts[id] > 0);
+            
+            if (peopleWhoNeedToPay.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+
+            for (let i = 0; i < peopleWhoNeedToPay.length; i++) {
+                const id = peopleWhoNeedToPay[i];
+                const amount = amounts[id];
+                const name = getMemberName(id);
+                
+                const qrItem = document.createElement('div');
+                qrItem.className = 'qr-item';
+                qrItem.innerHTML = `
+                    <canvas id="qr-${i}" width="150" height="150"></canvas>
+                    <div class="qr-label">${name} → ${payerName}</div>
+                    <div class="qr-amount">${amount.toFixed(2)} บาท</div>
+                    <div class="qr-promptpay">📱 ${payerPromptPay}</div>
+                `;
+                container.appendChild(qrItem);
+
+                await generateQRCode(`qr-${i}`, payerPromptPay, amount);
+            }
+        }
+
+        // ========== Share Functions ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function copyShareUrl() {
+            const url = document.getElementById('shareUrl').value;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('✅ คัดลอกลิงก์แล้ว!');
+            }).catch(() => {
+                document.getElementById('shareUrl').select();
+                document.execCommand('copy');
+                showToast('✅ คัดลอกลิงก์แล้ว!');
+            });
+        }
+
+        function shareToLine() {
+            const url = document.getElementById('shareUrl').value;
+            const text = `🧾 คำนวณหารเงิน\nรวม: ${lastCalculation?.total?.toFixed(2) || 0} บาท\n\nเปิดดู QR Code ได้เลย 👇\n${url}`;
+            window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareGeneric() {
+            const url = document.getElementById('shareUrl').value;
+            if (navigator.share) {
+                navigator.share({
+                    title: '🧾 คำนวณหารเงิน',
+                    text: `รวม ${lastCalculation?.total?.toFixed(2) || 0} บาท - เปิดดู QR Code พร้อมเพย์`,
+                    url: url
+                }).catch(() => {});
+            } else {
+                copyShareUrl();
+            }
+        }
+
+        // ========== Reset ==========
+        function resetAll() {
+            if (confirm('ต้องการล้างข้อมูลปัจจุบันทั้งหมดใช่ไหม? (สมาชิกจะยังอยู่)')) {
+                selectedPeople = [];
+                items = [];
+                lastCalculation = null;
+                updateSelectPeopleList();
+                updatePayerSelect();
+                updateItemsList();
+                document.getElementById('results').style.display = 'none';
+            }
+        }
+
+        // ========== Event Listeners ==========
+        document.getElementById('itemName').addEventListener('keypress', e => { if (e.key === 'Enter') addItem(); });
+        document.getElementById('itemPrice').addEventListener('keypress', e => { if (e.key === 'Enter') addItem(); });
+        document.getElementById('memberName').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('memberPromptPay').focus(); });
+        document.getElementById('memberPromptPay').addEventListener('keypress', e => { if (e.key === 'Enter') saveMember(); });
+        document.getElementById('memberModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeMemberModal(); });
+
+        // ========== Initialize ==========
+        loadSavedMembers();
+        
+        if (!loadFromUrl()) {
+            updateSavedMembersList();
+            updateSelectPeopleList();
+        }
+    </script>
+</body>
+</html>
